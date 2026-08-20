@@ -1,4 +1,4 @@
-const express = require('express');
+import express from 'express';
 
 const pokemon = [
   { id: 1, name: 'Bulbasaur', type: ['Grass', 'Poison'] },
@@ -30,4 +30,4 @@ app.get('/api/pokemon/:id', (request, response) => {
   return response.json({ data: selectedPokemon });
 });
 
-module.exports = app;
+export default app;

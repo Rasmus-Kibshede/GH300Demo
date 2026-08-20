@@ -1,7 +1,7 @@
-const assert = require('node:assert/strict');
-const { after, test } = require('node:test');
+import assert from 'node:assert/strict';
+import { after, test } from 'node:test';
 
-const app = require('../app');
+import app from '../app.js';
 
 const server = app.listen(0);
 const address = server.address();
