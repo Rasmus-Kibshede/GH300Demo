@@ -33,14 +33,14 @@ app.MapGet("/pokemons/type/{type}", (string type, IPokemonService service) =>
 app.Run();
 
 // Simple Pokemon service implementation
-interface IPokemonService
+public interface IPokemonService
 {
     IEnumerable<Pokemon> GetAll();
     Pokemon? GetById(int id);
     IEnumerable<Pokemon> GetByType(PokemonType type);
 }
 
-class PokemonService : IPokemonService
+public class PokemonService : IPokemonService
 {
     private readonly List<Pokemon> _pokemons =
     [
