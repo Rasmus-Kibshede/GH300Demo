@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { after, test } from 'node:test';
 
 import app from '../app.js';
@@ -14,14 +15,12 @@ after(() => {
 test('GET /api/pokemon returns 10 pokemon', async () => {
   const response = await fetch(`${baseUrl}/api/pokemon`);
   const body = await response.json();
+  const expectedPokemon = JSON.parse(
+    readFileSync(new URL('../pokemon.json', import.meta.url), 'utf8')
+  );
 
   assert.equal(response.status, 200);
-  assert.equal(body.data.length, 10);
-  assert.deepEqual(body.data[0], {
-    id: 1,
-    name: 'Bulbasaur',
-    type: ['Grass', 'Poison']
-  });
+  assert.deepEqual(body.data, expectedPokemon);
 });
 
 test('GET /api/pokemon/:id returns one pokemon', async () => {
