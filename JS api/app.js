@@ -24,12 +24,21 @@ const isValidPokemonPayload = (payload) =>
   payload.type.length > 0 &&
   payload.type.every((value) => typeof value === 'string' && value.length > 0);
 
+const parsePokemonId = (value) => {
+  const id = Number.parseInt(value, 10);
+  return Number.isNaN(id) ? null : id;
+};
+
 app.get('/api/pokemon', (_request, response) => {
   response.json({ data: pokemon });
 });
 
 app.get('/api/pokemon/:id', (request, response) => {
-  const id = Number.parseInt(request.params.id, 10);
+  const id = parsePokemonId(request.params.id);
+  if (id === null) {
+    return response.status(400).json({ error: 'Invalid pokemon id' });
+  }
+
   const selectedPokemon = pokemon.find((item) => item.id === id);
 
   if (!selectedPokemon) {
@@ -61,7 +70,11 @@ app.put('/api/pokemon/:id', (request, response) => {
     return response.status(400).json({ error: 'Invalid pokemon payload' });
   }
 
-  const id = Number.parseInt(request.params.id, 10);
+  const id = parsePokemonId(request.params.id);
+  if (id === null) {
+    return response.status(400).json({ error: 'Invalid pokemon id' });
+  }
+
   const index = pokemon.findIndex((item) => item.id === id);
 
   if (index === -1) {
@@ -80,7 +93,11 @@ app.put('/api/pokemon/:id', (request, response) => {
 });
 
 app.delete('/api/pokemon/:id', (request, response) => {
-  const id = Number.parseInt(request.params.id, 10);
+  const id = parsePokemonId(request.params.id);
+  if (id === null) {
+    return response.status(400).json({ error: 'Invalid pokemon id' });
+  }
+
   const index = pokemon.findIndex((item) => item.id === id);
 
   if (index === -1) {

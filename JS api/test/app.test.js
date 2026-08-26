@@ -44,6 +44,14 @@ test('GET /api/pokemon/:id returns 404 for missing pokemon', async () => {
   assert.equal(body.error, 'Pokemon not found');
 });
 
+test('GET /api/pokemon/:id returns 400 for invalid id', async () => {
+  const response = await fetch(`${baseUrl}/api/pokemon/not-a-number`);
+  const body = await response.json();
+
+  assert.equal(response.status, 400);
+  assert.equal(body.error, 'Invalid pokemon id');
+});
+
 test('POST /api/pokemon adds a pokemon', async () => {
   const response = await fetch(`${baseUrl}/api/pokemon`, {
     method: 'POST',
@@ -128,7 +136,7 @@ test('DELETE /api/pokemon/:id deletes one pokemon', async () => {
   assert.equal(verifyBody.error, 'Pokemon not found');
 });
 
-test('POST /api/pokemon returns 400 for invalid payload', async () => {
+test('POST /api/pokemon returns 400 for empty name', async () => {
   const response = await fetch(`${baseUrl}/api/pokemon`, {
     method: 'POST',
     headers: {
@@ -136,6 +144,23 @@ test('POST /api/pokemon returns 400 for invalid payload', async () => {
     },
     body: JSON.stringify({
       name: '',
+      type: ['Grass']
+    })
+  });
+  const body = await response.json();
+
+  assert.equal(response.status, 400);
+  assert.equal(body.error, 'Invalid pokemon payload');
+});
+
+test('POST /api/pokemon returns 400 for non-array type', async () => {
+  const response = await fetch(`${baseUrl}/api/pokemon`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: 'Oddish',
       type: 'Grass'
     })
   });
@@ -174,6 +199,23 @@ test('PUT /api/pokemon/:id returns 400 for invalid payload', async () => {
   assert.equal(body.error, 'Invalid pokemon payload');
 });
 
+test('PUT /api/pokemon/:id returns 400 for invalid id', async () => {
+  const response = await fetch(`${baseUrl}/api/pokemon/not-a-number`, {
+    method: 'PUT',
+    headers: {
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: 'Ditto',
+      type: ['Normal']
+    })
+  });
+  const body = await response.json();
+
+  assert.equal(response.status, 400);
+  assert.equal(body.error, 'Invalid pokemon id');
+});
+
 test('POST /api/pokemon keeps incrementing ids after delete', async () => {
   const firstCreateResponse = await fetch(`${baseUrl}/api/pokemon`, {
     method: 'POST',
@@ -205,4 +247,14 @@ test('POST /api/pokemon keeps incrementing ids after delete', async () => {
 
   assert.equal(secondCreateResponse.status, 201);
   assert.equal(secondCreateBody.data.id, firstCreateBody.data.id + 1);
+});
+
+test('DELETE /api/pokemon/:id returns 400 for invalid id', async () => {
+  const response = await fetch(`${baseUrl}/api/pokemon/not-a-number`, {
+    method: 'DELETE'
+  });
+  const body = await response.json();
+
+  assert.equal(response.status, 400);
+  assert.equal(body.error, 'Invalid pokemon id');
 });
