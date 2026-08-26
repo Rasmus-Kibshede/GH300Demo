@@ -15,6 +15,15 @@ app.MapGet("/pokemons/{id:int}", (int id, IPokemonService service) =>
         : Results.Ok(pokemon);
 });
 
+app.MapGet("/pokemons/name/{name}", (string name, IPokemonService service) =>
+{
+    var pokemon = service.GetByName(name);
+
+    return pokemon is null
+        ? Results.NotFound(new { message = $"Pokemon with name '{name}' was not found." })
+        : Results.Ok(pokemon);
+});
+
 
 app.MapGet("/pokemons/type/{type}", (string type, IPokemonService service) =>
 {
@@ -37,6 +46,7 @@ public interface IPokemonService
 {
     IEnumerable<Pokemon> GetAll();
     Pokemon? GetById(int id);
+    Pokemon? GetByName(string name);
     IEnumerable<Pokemon> GetByType(PokemonType type);
 }
 
@@ -59,6 +69,9 @@ public class PokemonService : IPokemonService
     public IEnumerable<Pokemon> GetAll() => _pokemons;
 
     public Pokemon? GetById(int id) => _pokemons.FirstOrDefault(p => p.Id == id);
+
+    public Pokemon? GetByName(string name) => _pokemons.FirstOrDefault(p =>
+        string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase));
 
     public IEnumerable<Pokemon> GetByType(PokemonType type) => _pokemons.Where(p => p.Type.Contains(type));
 }
