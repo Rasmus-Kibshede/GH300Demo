@@ -52,6 +52,14 @@ test('GET /api/pokemon/:id returns 400 for invalid id', async () => {
   assert.equal(body.error, 'Invalid pokemon id');
 });
 
+test('GET /api/pokemon/:id returns 400 for partially numeric id', async () => {
+  const response = await fetch(`${baseUrl}/api/pokemon/12abc`);
+  const body = await response.json();
+
+  assert.equal(response.status, 400);
+  assert.equal(body.error, 'Invalid pokemon id');
+});
+
 test('POST /api/pokemon adds a pokemon', async () => {
   const response = await fetch(`${baseUrl}/api/pokemon`, {
     method: 'POST',

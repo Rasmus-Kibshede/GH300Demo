@@ -25,6 +25,10 @@ const isValidPokemonPayload = (payload) =>
   payload.type.every((value) => typeof value === 'string' && value.length > 0);
 
 const parsePokemonId = (value) => {
+  if (!/^\d+$/.test(value)) {
+    return null;
+  }
+
   const id = Number.parseInt(value, 10);
   return Number.isNaN(id) ? null : id;
 };
