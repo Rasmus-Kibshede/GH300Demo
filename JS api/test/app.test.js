@@ -258,3 +258,13 @@ test('DELETE /api/pokemon/:id returns 400 for invalid id', async () => {
   assert.equal(response.status, 400);
   assert.equal(body.error, 'Invalid pokemon id');
 });
+
+test('DELETE /api/pokemon/:id returns 404 for missing pokemon', async () => {
+  const response = await fetch(`${baseUrl}/api/pokemon/999999`, {
+    method: 'DELETE'
+  });
+  const body = await response.json();
+
+  assert.equal(response.status, 404);
+  assert.equal(body.error, 'Pokemon not found');
+});
