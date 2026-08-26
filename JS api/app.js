@@ -44,7 +44,7 @@ app.post('/api/pokemon', (request, response) => {
   }
 
   const newPokemon = {
-    id: pokemon.length > 0 ? Math.max(...pokemon.map((item) => item.id)) + 1 : 1,
+    id: pokemon.reduce((maxId, item) => Math.max(maxId, item.id), 0) + 1,
     name: request.body.name,
     type: request.body.type
   };

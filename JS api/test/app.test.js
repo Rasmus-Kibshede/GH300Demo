@@ -64,7 +64,19 @@ test('POST /api/pokemon adds a pokemon', async () => {
 });
 
 test('PUT /api/pokemon/:id updates one pokemon', async () => {
-  const response = await fetch(`${baseUrl}/api/pokemon/10`, {
+  const createResponse = await fetch(`${baseUrl}/api/pokemon`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: 'Pidgey',
+      type: ['Normal', 'Flying']
+    })
+  });
+  const createBody = await createResponse.json();
+
+  const response = await fetch(`${baseUrl}/api/pokemon/${createBody.data.id}`, {
     method: 'PUT',
     headers: {
       'content-type': 'application/json'
@@ -78,7 +90,7 @@ test('PUT /api/pokemon/:id updates one pokemon', async () => {
 
   assert.equal(response.status, 200);
   assert.deepEqual(body.data, {
-    id: 10,
+    id: createBody.data.id,
     name: 'Raichu',
     type: ['Electric']
   });
@@ -125,6 +137,35 @@ test('POST /api/pokemon returns 400 for invalid payload', async () => {
     body: JSON.stringify({
       name: '',
       type: 'Grass'
+    })
+  });
+  const body = await response.json();
+
+  assert.equal(response.status, 400);
+  assert.equal(body.error, 'Invalid pokemon payload');
+});
+
+test('PUT /api/pokemon/:id returns 400 for invalid payload', async () => {
+  const createResponse = await fetch(`${baseUrl}/api/pokemon`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: 'Ditto',
+      type: ['Normal']
+    })
+  });
+  const createBody = await createResponse.json();
+
+  const response = await fetch(`${baseUrl}/api/pokemon/${createBody.data.id}`, {
+    method: 'PUT',
+    headers: {
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: '',
+      type: ['Normal']
     })
   });
   const body = await response.json();
