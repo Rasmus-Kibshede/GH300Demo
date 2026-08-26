@@ -85,21 +85,50 @@ test('PUT /api/pokemon/:id updates one pokemon', async () => {
 });
 
 test('DELETE /api/pokemon/:id deletes one pokemon', async () => {
-  const response = await fetch(`${baseUrl}/api/pokemon/10`, {
+  const createResponse = await fetch(`${baseUrl}/api/pokemon`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: 'Snorlax',
+      type: ['Normal']
+    })
+  });
+  const createBody = await createResponse.json();
+
+  const response = await fetch(`${baseUrl}/api/pokemon/${createBody.data.id}`, {
     method: 'DELETE'
   });
   const body = await response.json();
 
   assert.equal(response.status, 200);
   assert.deepEqual(body.data, {
-    id: 10,
-    name: 'Raichu',
-    type: ['Electric']
+    id: createBody.data.id,
+    name: 'Snorlax',
+    type: ['Normal']
   });
 
-  const verifyResponse = await fetch(`${baseUrl}/api/pokemon/10`);
+  const verifyResponse = await fetch(`${baseUrl}/api/pokemon/${createBody.data.id}`);
   const verifyBody = await verifyResponse.json();
 
   assert.equal(verifyResponse.status, 404);
   assert.equal(verifyBody.error, 'Pokemon not found');
+});
+
+test('POST /api/pokemon returns 400 for invalid payload', async () => {
+  const response = await fetch(`${baseUrl}/api/pokemon`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: '',
+      type: 'Grass'
+    })
+  });
+  const body = await response.json();
+
+  assert.equal(response.status, 400);
+  assert.equal(body.error, 'Invalid pokemon payload');
 });

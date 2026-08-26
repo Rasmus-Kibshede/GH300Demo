@@ -16,6 +16,13 @@ const pokemon = [
 const app = express();
 app.use(express.json());
 
+const isValidPokemonPayload = (payload) =>
+  typeof payload?.name === 'string' &&
+  payload.name.length > 0 &&
+  Array.isArray(payload.type) &&
+  payload.type.length > 0 &&
+  payload.type.every((value) => typeof value === 'string' && value.length > 0);
+
 app.get('/api/pokemon', (_request, response) => {
   response.json({ data: pokemon });
 });
@@ -32,6 +39,10 @@ app.get('/api/pokemon/:id', (request, response) => {
 });
 
 app.post('/api/pokemon', (request, response) => {
+  if (!isValidPokemonPayload(request.body)) {
+    return response.status(400).json({ error: 'Invalid pokemon payload' });
+  }
+
   const newPokemon = {
     id: pokemon.length > 0 ? Math.max(...pokemon.map((item) => item.id)) + 1 : 1,
     name: request.body.name,
@@ -49,6 +60,10 @@ app.put('/api/pokemon/:id', (request, response) => {
 
   if (index === -1) {
     return response.status(404).json({ error: 'Pokemon not found' });
+  }
+
+  if (!isValidPokemonPayload(request.body)) {
+    return response.status(400).json({ error: 'Invalid pokemon payload' });
   }
 
   const updatedPokemon = {
