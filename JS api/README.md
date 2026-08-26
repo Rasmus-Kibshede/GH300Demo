@@ -18,3 +18,6 @@ The server runs on `http://localhost:3001` by default.
 
 - `GET /api/pokemon` - list all Pokémon
 - `GET /api/pokemon/:id` - get a single Pokémon by id
+- `POST /api/pokemon` - add a new Pokémon
+- `PUT /api/pokemon/:id` - update a Pokémon by id
+- `DELETE /api/pokemon/:id` - delete a Pokémon by id
