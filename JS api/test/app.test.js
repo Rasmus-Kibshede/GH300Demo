@@ -31,7 +31,7 @@ test('GET /api/pokemon starts from the pokemon json file', async () => {
   const body = await response.json();
 
   assert.equal(response.status, 200);
-  assert.deepEqual(body.data.slice(0, seededPokemon.length), seededPokemon);
+  assert.deepEqual(body.data, seededPokemon);
 });
 
 test('GET /api/pokemon/:id returns one pokemon', async () => {
