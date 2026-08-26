@@ -66,13 +66,13 @@ app.post('/api/pokemon', (request, response) => {
 });
 
 app.put('/api/pokemon/:id', (request, response) => {
-  if (!isValidPokemonPayload(request.body)) {
-    return response.status(400).json({ error: 'Invalid pokemon payload' });
-  }
-
   const id = parsePokemonId(request.params.id);
   if (id === null) {
     return response.status(400).json({ error: 'Invalid pokemon id' });
+  }
+
+  if (!isValidPokemonPayload(request.body)) {
+    return response.status(400).json({ error: 'Invalid pokemon payload' });
   }
 
   const index = pokemon.findIndex((item) => item.id === id);
