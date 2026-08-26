@@ -216,6 +216,23 @@ test('PUT /api/pokemon/:id returns 400 for invalid id', async () => {
   assert.equal(body.error, 'Invalid pokemon id');
 });
 
+test('PUT /api/pokemon/:id returns 404 for missing pokemon', async () => {
+  const response = await fetch(`${baseUrl}/api/pokemon/999999`, {
+    method: 'PUT',
+    headers: {
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: 'Unknown',
+      type: ['Normal']
+    })
+  });
+  const body = await response.json();
+
+  assert.equal(response.status, 404);
+  assert.equal(body.error, 'Pokemon not found');
+});
+
 test('POST /api/pokemon keeps incrementing ids after delete', async () => {
   const firstCreateResponse = await fetch(`${baseUrl}/api/pokemon`, {
     method: 'POST',
