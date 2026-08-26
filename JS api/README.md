@@ -3,7 +3,7 @@ This is a repo for demo the course GH 300 microsoft course
 
 ## Pokemon API
 
-A simple Express.js API with 10 Pokémon stored in memory.
+A simple Express.js API with 10 Pokémon seeded from `pokemon.json`.
 
 ### Run
 
