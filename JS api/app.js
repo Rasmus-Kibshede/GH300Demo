@@ -1,7 +1,14 @@
 import express from 'express';
 import { readFileSync } from 'node:fs';
 
-const pokemon = JSON.parse(readFileSync(new URL('./pokemon.json', import.meta.url), 'utf8'));
+const pokemon = JSON.parse(
+  readFileSync(new URL('./pokemon.json', import.meta.url), 'utf8')
+);
+
+if (!Array.isArray(pokemon) || !pokemon.every((item) => Number.isInteger(item?.id))) {
+  throw new Error('Invalid seed data in pokemon.json: expected an array of objects with integer "id"');
+}
+
 let nextPokemonId = pokemon.reduce((maxId, item) => Math.max(maxId, item.id), 0) + 1;
 
 const app = express();
