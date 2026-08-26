@@ -173,3 +173,36 @@ test('PUT /api/pokemon/:id returns 400 for invalid payload', async () => {
   assert.equal(response.status, 400);
   assert.equal(body.error, 'Invalid pokemon payload');
 });
+
+test('POST /api/pokemon keeps incrementing ids after delete', async () => {
+  const firstCreateResponse = await fetch(`${baseUrl}/api/pokemon`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: 'Abra',
+      type: ['Psychic']
+    })
+  });
+  const firstCreateBody = await firstCreateResponse.json();
+
+  await fetch(`${baseUrl}/api/pokemon/${firstCreateBody.data.id}`, {
+    method: 'DELETE'
+  });
+
+  const secondCreateResponse = await fetch(`${baseUrl}/api/pokemon`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: 'Kadabra',
+      type: ['Psychic']
+    })
+  });
+  const secondCreateBody = await secondCreateResponse.json();
+
+  assert.equal(secondCreateResponse.status, 201);
+  assert.equal(secondCreateBody.data.id, firstCreateBody.data.id + 1);
+});

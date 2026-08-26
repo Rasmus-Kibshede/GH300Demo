@@ -12,6 +12,7 @@ const pokemon = [
   { id: 9, name: 'Blastoise', type: ['Water'] },
   { id: 10, name: 'Pikachu', type: ['Electric'] }
 ];
+let nextPokemonId = pokemon.reduce((maxId, item) => Math.max(maxId, item.id), 0) + 1;
 
 const app = express();
 app.use(express.json());
@@ -44,12 +45,13 @@ app.post('/api/pokemon', (request, response) => {
   }
 
   const newPokemon = {
-    id: pokemon.reduce((maxId, item) => Math.max(maxId, item.id), 0) + 1,
+    id: nextPokemonId,
     name: request.body.name,
     type: request.body.type
   };
 
   pokemon.push(newPokemon);
+  nextPokemonId += 1;
 
   return response.status(201).json({ data: newPokemon });
 });
