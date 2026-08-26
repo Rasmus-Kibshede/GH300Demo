@@ -43,3 +43,63 @@ test('GET /api/pokemon/:id returns 404 for missing pokemon', async () => {
   assert.equal(response.status, 404);
   assert.equal(body.error, 'Pokemon not found');
 });
+
+test('POST /api/pokemon adds a pokemon', async () => {
+  const response = await fetch(`${baseUrl}/api/pokemon`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: 'Mew',
+      type: ['Psychic']
+    })
+  });
+  const body = await response.json();
+
+  assert.equal(response.status, 201);
+  assert.equal(body.data.name, 'Mew');
+  assert.deepEqual(body.data.type, ['Psychic']);
+  assert.equal(typeof body.data.id, 'number');
+});
+
+test('PUT /api/pokemon/:id updates one pokemon', async () => {
+  const response = await fetch(`${baseUrl}/api/pokemon/10`, {
+    method: 'PUT',
+    headers: {
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: 'Raichu',
+      type: ['Electric']
+    })
+  });
+  const body = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(body.data, {
+    id: 10,
+    name: 'Raichu',
+    type: ['Electric']
+  });
+});
+
+test('DELETE /api/pokemon/:id deletes one pokemon', async () => {
+  const response = await fetch(`${baseUrl}/api/pokemon/10`, {
+    method: 'DELETE'
+  });
+  const body = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(body.data, {
+    id: 10,
+    name: 'Raichu',
+    type: ['Electric']
+  });
+
+  const verifyResponse = await fetch(`${baseUrl}/api/pokemon/10`);
+  const verifyBody = await verifyResponse.json();
+
+  assert.equal(verifyResponse.status, 404);
+  assert.equal(verifyBody.error, 'Pokemon not found');
+});

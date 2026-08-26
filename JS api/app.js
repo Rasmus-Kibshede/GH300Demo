@@ -14,6 +14,7 @@ const pokemon = [
 ];
 
 const app = express();
+app.use(express.json());
 
 app.get('/api/pokemon', (_request, response) => {
   response.json({ data: pokemon });
@@ -28,6 +29,50 @@ app.get('/api/pokemon/:id', (request, response) => {
   }
 
   return response.json({ data: selectedPokemon });
+});
+
+app.post('/api/pokemon', (request, response) => {
+  const newPokemon = {
+    id: pokemon.length > 0 ? Math.max(...pokemon.map((item) => item.id)) + 1 : 1,
+    name: request.body.name,
+    type: request.body.type
+  };
+
+  pokemon.push(newPokemon);
+
+  return response.status(201).json({ data: newPokemon });
+});
+
+app.put('/api/pokemon/:id', (request, response) => {
+  const id = Number.parseInt(request.params.id, 10);
+  const index = pokemon.findIndex((item) => item.id === id);
+
+  if (index === -1) {
+    return response.status(404).json({ error: 'Pokemon not found' });
+  }
+
+  const updatedPokemon = {
+    ...pokemon[index],
+    name: request.body.name,
+    type: request.body.type
+  };
+
+  pokemon[index] = updatedPokemon;
+
+  return response.json({ data: updatedPokemon });
+});
+
+app.delete('/api/pokemon/:id', (request, response) => {
+  const id = Number.parseInt(request.params.id, 10);
+  const index = pokemon.findIndex((item) => item.id === id);
+
+  if (index === -1) {
+    return response.status(404).json({ error: 'Pokemon not found' });
+  }
+
+  const [deletedPokemon] = pokemon.splice(index, 1);
+
+  return response.json({ data: deletedPokemon });
 });
 
 export default app;
